@@ -1,0 +1,24 @@
+# Rohbilder und Datensätze (nicht ins Git)
+data/
+datasets/
+raw/
+images/
+*.jpg
+*.jpeg
+*.png
+*.heic
+
+# YOLO-Trainingsausgaben und Gewichte
+runs/
+*.pt
+*.onnx
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Datenordner, falls versehentlich im Repo angelegt
+CashCountAI_Daten/
