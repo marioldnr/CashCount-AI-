@@ -1,0 +1,13 @@
+# Datensatz für YOLO. Den Roboflow-Export nach datasets/v1/ kopieren.
+path: datasets/v1
+train: train/images
+val: valid/images
+test: test/images
+
+names:
+  0: eur5
+  1: eur10
+  2: eur20
+  3: eur50
+  4: eur100
+  5: eur200
