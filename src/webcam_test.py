@@ -1,28 +1,32 @@
-from ultralytics import YOLO
 import cv2
-import sys
+from ultralytics import YOLO
 
-# Fertiges Modell (erkennt Alltagsgegenstände). Wird beim ersten Start automatisch heruntergeladen.
-model = YOLO("yolov8n.pt")
+from kamera import oeffne_kamera
 
-# 0 = eingebaute Webcam. Bei externer Kamera evtl. 1 probieren.
-cap = cv2.VideoCapture(0)
+model = YOLO("models/best.pt")
+werte = {"5_euro": 5, "10_euro": 10, "20_euro": 20, "50_euro": 50,
+         "100_euro": 100, "200_euro": 200}
 
-if not cap.isOpened():
-    print("Kamera konnte nicht geöffnet werden.")
-    sys.exit()
+cap = oeffne_kamera()
 
 while True:
-    ok, frame = cap.read()        # ein Bild von der Kamera holen
+    ok, frame = cap.read()
     if not ok:
         break
 
-    result = model(frame, verbose=False)[0]   # KI auf das Bild anwenden
-    bild_mit_rahmen = result.plot()           # Rahmen + Beschriftung einzeichnen
+    result = model(frame, conf=0.5, verbose=False)[0]
 
-    cv2.imshow("CashCount Test - Beenden mit q", bild_mit_rahmen)
+    summe = 0
+    for box in result.boxes:
+        klasse = model.names[int(box.cls)]
+        summe += werte.get(klasse, 0)
 
-    if cv2.waitKey(1) & 0xFF == ord("q"):     # Taste q beendet
+    bild = result.plot()
+    cv2.putText(bild, f"Summe: {summe} EUR", (20, 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 3)
+    cv2.imshow("CashCount AI - Beenden mit q", bild)
+
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
 cap.release()
